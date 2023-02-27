@@ -7,6 +7,12 @@ from tkinter import *
 
 #make array for placed blocks so they can be removed if the word check returns zero
 def check_word():
+  if(Scrabble.p1turn):
+    hide_let(player1_arr)
+  else:
+    hide_let(player2_arr)
+  Scrabble.p1turn = not Scrabble.p1turn
+  update_turn_label()
   return
 
 def update_turn_label():
