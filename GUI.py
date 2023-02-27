@@ -123,10 +123,10 @@ def drag_stop(event):
           print(score)
           if(Scrabble.scrabble_board[j][i].block != None):
             update_board()
-            update_score(score)
-            board_arr[j][i].config(text=widget.cget("text"))
+            update_score(score) #move score and p1 turn change to the check button
+            board_arr[j][i].config(text=widget.cget("text")) # add to array which locations have these placed blocks so we can remove if not word 
             pick_block(Scrabble.p1turn, widget)
-            Scrabble.p1turn = not Scrabble.p1turn
+            #Scrabble.p1turn = not Scrabble.p1turn
             update_turn_label()
             #widget.destroy()
 
