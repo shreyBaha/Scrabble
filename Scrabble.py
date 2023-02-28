@@ -151,12 +151,17 @@ def word_val_vert(i, j):
     return ret_val   
   return 0
 
-def place_block(block, i, j):
+def get_score(i, j):
+  score = word_val_hor(i, j)
+  score += word_val_vert(i, j)
+  return score
+
+def place_block(block, i, j): #move score to seperate method
   if(scrabble_board[i][j].valid_placement):
     scrabble_board[i][j].block = block
     scrabble_board[i][j].occ = True
-    score = word_val_hor(i, j) #move these methods to a new checker method that is called when button is pressed. remove the letters if score = 0 in method
-    score += word_val_vert(i, j)
+    #score = word_val_hor(i, j) #move these methods to a new checker method that is called when button is pressed. remove the letters if score = 0 in method
+    #score += word_val_vert(i, j)
     if(i > 0):
       scrabble_board[i-1][j].valid_placement = True
     if(i < 14):
@@ -165,7 +170,7 @@ def place_block(block, i, j):
       scrabble_board[i][j-1].valid_placement = True
     if(j < 14):
       scrabble_board[i][j+1].valid_placement = True
-    return score
+    #return score
       
 def reset_board():
   for i in range(0, 15):

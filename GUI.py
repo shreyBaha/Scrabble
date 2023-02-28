@@ -11,9 +11,13 @@ def check_word():
     hide_let(player1_arr)
   else:
     hide_let(player2_arr)
+  if(len(placed_block_arr) != 0):
+    score = Scrabble.get_score(int(placed_block_arr[0][0:placed_block_arr[0].index("-")]), int(placed_block_arr[0][placed_block_arr[0].index("-")+1:]))
+    print(score)
+    update_score(score)
+  placed_block_arr.clear()
   Scrabble.p1turn = not Scrabble.p1turn
   update_turn_label()
-  return
 
 def update_turn_label():
   if(Scrabble.p1turn):
@@ -22,7 +26,7 @@ def update_turn_label():
     turn_display.config(text="P2 turn")
 
 def p1display():
-  if(Scrabble.p1turn): #add check for text of label to see if blank (also word multiplier isnt working)
+  if(Scrabble.p1turn): #add check for text of label (end) to see if blank (also word multiplier isnt working)
     for i in player1_arr:
       if(not i.cget("text") == ""):
         i.config(fg="black")
@@ -49,11 +53,9 @@ def update_score(num):
   if(Scrabble.p1turn):
     new_score = (int)(scorep1.cget("text")[10:]) + num
     scorep1.config(text=f"Score P1: {new_score}")
-    hide_let(player1_arr)
   else:
     new_score = (int)(scorep2.cget("text")[10:]) + num
     scorep2.config(text=f"Score P2: {new_score}")
-    hide_let(player2_arr)
     
 def update_board():
   for i in range(0, 15):
@@ -86,13 +88,13 @@ def pick_block(p1turn, widget):
       for i in range(0,7):
         if(player1_arr[i] == widget):
           widget.place(x=219.5+i*48, y=600)
-          hide_let(player1_arr)
+          #hide_let(player1_arr)
     else:
       for i in range(0,7):
         if(player2_arr[i] == widget):
           widget.place(x=219.5+i*48, y=650) 
-          hide_let(player2_arr)
-    widget.config(text=Scrabble.block_bag.pop().letter, fg="white")
+          #hide_let(player2_arr)
+    widget.config(text=Scrabble.block_bag.pop().letter, fg="black")
     widget.bind("<Button-1>", drag_start)
     widget.bind("<B1-Motion>", drag_motion)
     widget.bind("<ButtonRelease-1>", drag_stop)
@@ -117,6 +119,8 @@ def drag_motion(event):
   y = widget.winfo_y()+20
   print((str)(x)+", "+(str)(y)) #location of top left corner. need to make the coordinates give pos of middle
    
+   
+   #j and i reversed in this method
 def drag_stop(event):
   widget = event.widget
   x = widget.winfo_x()+20
@@ -125,16 +129,18 @@ def drag_stop(event):
     for j in range(0, 15):
       if(x > 25+48*i and x < 25+48*(i+1) and y > 40*j and y < 40*(j+1)):
         if(Scrabble.scrabble_board[j][i].occ == False):
-          score = Scrabble.place_block(Scrabble.Block(widget.cget("text").lower()), j, i)
-          print(score)
+          Scrabble.place_block(Scrabble.Block(widget.cget("text").lower()), j, i)
+          placed_block_arr.append(f"{j}-{i}")
           if(Scrabble.scrabble_board[j][i].block != None):
             update_board()
-            update_score(score) #move score and p1 turn change to the check button
+            #update_score(score) #move score and p1 turn change to the check button
             board_arr[j][i].config(text=widget.cget("text")) # add to array which locations have these placed blocks so we can remove if not word 
             pick_block(Scrabble.p1turn, widget)
             #Scrabble.p1turn = not Scrabble.p1turn
-            update_turn_label()
             #widget.destroy()
+            print(int(placed_block_arr[0][0:placed_block_arr[0].index("-")]))
+            print(int(placed_block_arr[0][placed_block_arr[0].index("-")+1:]))
+            print(placed_block_arr)
 
 root = Tk()
 
@@ -156,8 +162,9 @@ player2_display = Button(root, width=7, height= 1, text= "P2 Display", command=p
 player2_display.place(x=610, y=650)
 turn_display = Label(root, text="P1 turn", width=7, height=1)
 turn_display.place(x=700,y=625)
-check = Button(root, width=7, height= 1, text= "P1 Display", command=check_word)
+check = Button(root, width=7, height= 1, text= "check word", command=check_word)
 check.place(x=0,y=0)
+placed_block_arr = []
 
 p2hide = LabelFrame()
 for i in range(0, 7):
