@@ -6,15 +6,50 @@ from tkinter import *
 
 
 #make array for placed blocks so they can be removed if the word check returns zero
+def clear_blocks(placed_block_arr):
+  for x in range(0,len(placed_block_arr)):
+    i = (int)(placed_block_arr[x][0:placed_block_arr[x].index("-")])
+    j = (int)(placed_block_arr[x][placed_block_arr[x].index("-")+1:])
+    board_arr[i][j].config(text="")
+    board_tile = Scrabble.scrabble_board[i][j]
+    board_tile.block = None
+    board_tile.occ = False
+    if(i != 7 or j != 7):
+      board_tile.valid_placement = False
+  #above section blocks below section clears valid placement of surrounding blocks
+  for i in range(0,15):
+    for j in range(0,15):
+      if(Scrabble.scrabble_board[i][j].occ == False):
+        if(i > 0):
+          if(Scrabble.scrabble_board[i-1][j].occ == True):
+            Scrabble.scrabble_board[i][j].valid_placement = True
+        elif(i < 14):
+          if(Scrabble.scrabble_board[i+1][j].occ == True):
+            Scrabble.scrabble_board[i][j].valid_placement = True
+        elif(j > 0):
+          if(Scrabble.scrabble_board[i][j-1].occ == True):
+            Scrabble.scrabble_board[i][j].valid_placement = True
+        elif(j < 14):
+          if(Scrabble.scrabble_board[i][j+1].occ == True):
+            Scrabble.scrabble_board[i][j].valid_placement = True 
+        else:
+          Scrabble.scrabble_board[i][j].valid_placement = False
+  print(Scrabble.scrabble_board[6][7].valid_placement)
+
 def check_word():
   if(Scrabble.p1turn):
     hide_let(player1_arr)
   else:
     hide_let(player2_arr)
   if(len(placed_block_arr) != 0):
-    score = Scrabble.get_score(int(placed_block_arr[0][0:placed_block_arr[0].index("-")]), int(placed_block_arr[0][placed_block_arr[0].index("-")+1:]))
+    score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]))
     print(score)
-    update_score(score)
+    if(score == 0): # if word doesn't exit clear blocks from display
+      clear_blocks(placed_block_arr)
+    else:
+      update_score(score)
+  update_board()
+      
   placed_block_arr.clear()
   Scrabble.p1turn = not Scrabble.p1turn
   update_turn_label()
@@ -132,9 +167,9 @@ def drag_stop(event):
           Scrabble.place_block(Scrabble.Block(widget.cget("text").lower()), j, i)
           placed_block_arr.append(f"{j}-{i}")
           if(Scrabble.scrabble_board[j][i].block != None):
-            update_board()
+            update_board() # call made to update beige blocks
             #update_score(score) #move score and p1 turn change to the check button
-            board_arr[j][i].config(text=widget.cget("text")) # add to array which locations have these placed blocks so we can remove if not word 
+            board_arr[j][i].config(text=widget.cget("text"))  
             pick_block(Scrabble.p1turn, widget)
             #Scrabble.p1turn = not Scrabble.p1turn
             #widget.destroy()
