@@ -19,22 +19,17 @@ def clear_blocks(placed_block_arr):
   #above section blocks below section clears valid placement of surrounding blocks
   for i in range(0,15):
     for j in range(0,15):
-      if(Scrabble.scrabble_board[i][j].occ == False):
-        if(i > 0):
-          if(Scrabble.scrabble_board[i-1][j].occ == True):
-            Scrabble.scrabble_board[i][j].valid_placement = True
-        elif(i < 14):
-          if(Scrabble.scrabble_board[i+1][j].occ == True):
-            Scrabble.scrabble_board[i][j].valid_placement = True
-        elif(j > 0):
-          if(Scrabble.scrabble_board[i][j-1].occ == True):
-            Scrabble.scrabble_board[i][j].valid_placement = True
-        elif(j < 14):
-          if(Scrabble.scrabble_board[i][j+1].occ == True):
-            Scrabble.scrabble_board[i][j].valid_placement = True 
+      if(Scrabble.scrabble_board[i][j].occ == False and (i != 7 or j != 7)):
+        if(i > 0 and Scrabble.scrabble_board[i-1][j].occ == True):
+          Scrabble.scrabble_board[i][j].valid_placement = True
+        elif(i < 14 and Scrabble.scrabble_board[i+1][j].occ == True):
+          Scrabble.scrabble_board[i][j].valid_placement = True
+        elif(j > 0 and Scrabble.scrabble_board[i][j-1].occ == True):
+          Scrabble.scrabble_board[i][j].valid_placement = True
+        elif(j < 14 and Scrabble.scrabble_board[i][j+1].occ == True):
+          Scrabble.scrabble_board[i][j].valid_placement = True 
         else:
           Scrabble.scrabble_board[i][j].valid_placement = False
-  print(Scrabble.scrabble_board[6][7].valid_placement)
 
 def check_word():
   if(Scrabble.p1turn):
