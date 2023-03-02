@@ -1,5 +1,4 @@
 import numpy as np
-#create word code array ex of word code 9-7-9-6-9-5 perhaps 13 cuz mult not applide to other thing
 class Block:
   def __init__(self, letter):
     self.letter = letter

@@ -33,7 +33,13 @@ def check_word():
     hide_let(player2_arr)
   if(len(placed_block_arr) != 0):
     #if len = 1 and i-1 or i+1 == occ call hor else call vert
-    if((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]) == (int)(placed_block_arr[1][0:placed_block_arr[1].index("-")])):
+    if(len(placed_block_arr) == 1 and (Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])+1][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])].occ or Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])-1][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])].occ)):
+      print("vert")
+      score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), False)
+    elif(len(placed_block_arr) == 1 and (Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])+1].occ or Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])-1].occ)):
+      print("hor")
+      score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), True)
+    elif((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]) == (int)(placed_block_arr[1][0:placed_block_arr[1].index("-")])):
       score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), True)
       print("hor")
     else:
