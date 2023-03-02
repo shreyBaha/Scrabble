@@ -1,11 +1,6 @@
 import Scrabble
 from tkinter import *
 
-#make array of frames and have them shift down whenever there is an empty slot then append // sperate array for each player // hide and display using buttons
-#MAYBE DONT DESTROY BUT MOVE BACK WITH NEW LETTER
-
-
-#make array for placed blocks so they can be removed if the word check returns zero ||IF CLEAR RETURN BLOCKS DONT POP NEW ONES
 def clear_blocks(placed_block_arr):
   for x in range(0,len(placed_block_arr)):
     i = (int)(placed_block_arr[x][0:placed_block_arr[x].index("-")])
@@ -37,9 +32,15 @@ def check_word():
   else:
     hide_let(player2_arr)
   if(len(placed_block_arr) != 0):
-    score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]))
+    #if len = 1 and i-1 or i+1 == occ call hor else call vert
+    if((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]) == (int)(placed_block_arr[1][0:placed_block_arr[1].index("-")])):
+      score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), True)
+      print("hor")
+    else:
+      print("vert")
+      score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), False)
     print(score)
-    if(score == 0): # if word doesn't exit clear blocks from display
+    if(score == None): # if word doesn't exit clear blocks from display || change this to None down the line
       clear_blocks(placed_block_arr)
       for i in placed_widget_arr:
         pick_block(i)
@@ -58,7 +59,7 @@ def update_turn_label():
     turn_display.config(text="P2 turn")
 
 def p1display():
-  if(Scrabble.p1turn): #add check for text of label (end) to see if blank (also word multiplier isnt working)
+  if(Scrabble.p1turn): #add check for text of label (end) to see if blank
     for i in player1_arr:
       if(not i.cget("text") == ""):
         i.config(fg="black")
@@ -129,11 +130,10 @@ def return_block(p1turn, widget):
   widget.unbind("<ButtonRelease-1>", funcid=None)
           
 
-def pick_block(widget): #make this call after check block
-  #put this section in new method return block
+def pick_block(widget):
   if(Scrabble.block_bag[0] != None):
     widget.config(text=Scrabble.block_bag.pop().letter)
-  else:     #else remove text and unbind the widget
+  else:     #else remove text and unbind the widget if bag is empty (no more blocks to draw)
     widget.config(text="")
     widget.unbind("<Button-1>", funcid=None)
     widget.unbind("<B1-Motion>", funcid=None)
@@ -168,12 +168,9 @@ def drag_stop(event):
           if(Scrabble.scrabble_board[j][i].block != None):
             placed_block_arr.append(f"{j}-{i}")
             update_board() # call made to update beige blocks
-            #update_score(score) #move score and p1 turn change to the check button
             board_arr[j][i].config(text=widget.cget("text"))
             placed_widget_arr.append(widget)  
-            return_block(Scrabble.p1turn, widget) #MAKE THIS RETURN BLOCK put pick block in check word 
-            #Scrabble.p1turn = not Scrabble.p1turn
-            #widget.destroy()
+            return_block(Scrabble.p1turn, widget)
             print(int(placed_block_arr[0][0:placed_block_arr[0].index("-")]))
             print(int(placed_block_arr[0][placed_block_arr[0].index("-")+1:]))
             print(placed_block_arr)
