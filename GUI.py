@@ -32,29 +32,38 @@ def check_word():
   else:
     hide_let(player2_arr)
   if(len(placed_block_arr) != 0):
-    #if len = 1 and i-1 or i+1 == occ call hor else call vert
-    if(len(placed_block_arr) == 1 and (Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])+1][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])].occ or Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])-1][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])].occ)):
-      print("vert")
+    #make check if i > 0 ect in case of index out of bounds
+    if(len(placed_block_arr) == 1 and (int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]) < 14 and (Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])+1][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])].occ)):
+      #print("vert")
       score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), False)
-    elif(len(placed_block_arr) == 1 and (Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])+1].occ or Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])-1].occ)):
-      print("hor")
+    elif(len(placed_block_arr) == 1 and (int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]) > 0 and Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])-1][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])].occ):
+      #print("vert")
+      score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), False)
+    elif(len(placed_block_arr) == 1 and (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]) < 14 and (Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])+1].occ)):
+      #print("hor")
       score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), True)
-    elif((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]) == (int)(placed_block_arr[1][0:placed_block_arr[1].index("-")])):
+    elif(len(placed_block_arr) == 1 and (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]) < 14 and Scrabble.scrabble_board[(int)(placed_block_arr[0][0:placed_block_arr[0].index("-")])][(int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:])-1].occ):
+      #print("hor")
       score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), True)
-      print("hor")
+    elif(len(placed_block_arr) > 1 and (int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]) == (int)(placed_block_arr[1][0:placed_block_arr[1].index("-")])):
+      score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), True)
+      #print("hor")
     else:
-      print("vert")
+      #print("vert")
       score = Scrabble.get_score((int)(placed_block_arr[0][0:placed_block_arr[0].index("-")]), (int)(placed_block_arr[0][placed_block_arr[0].index("-")+1:]), False)
-    print(score)
-    if(score == None): # if word doesn't exit clear blocks from display || change this to None down the line
-      clear_blocks(placed_block_arr)
+    #print(score)
+    if(score != None): # if word doesn't exit clear blocks from display || change this to None down the line
+      update_score(score)
       for i in placed_widget_arr:
+        #print(placed_widget_arr)
+        #print("1")
         pick_block(i)
     else:
-      update_score(score)
+      clear_blocks(placed_block_arr)
   update_board()
       
   placed_block_arr.clear()
+  placed_widget_arr.clear()
   Scrabble.p1turn = not Scrabble.p1turn
   update_turn_label()
 
@@ -65,7 +74,7 @@ def update_turn_label():
     turn_display.config(text="P2 turn")
 
 def p1display():
-  if(Scrabble.p1turn): #add check for text of label (end) to see if blank
+  if(Scrabble.p1turn): 
     for i in player1_arr:
       if(not i.cget("text") == ""):
         i.config(fg="black")
@@ -76,10 +85,11 @@ def p1display():
 def p2display():
   if(not Scrabble.p1turn):
     for i in player2_arr:
-      i.config(fg="black")
-      i.bind("<Button-1>", drag_start)
-      i.bind("<B1-Motion>", drag_motion)
-      i.bind("<ButtonRelease-1>", drag_stop)
+      if(not i.cget("text") == ""):
+        i.config(fg="black")
+        i.bind("<Button-1>", drag_start)
+        i.bind("<B1-Motion>", drag_motion)
+        i.bind("<ButtonRelease-1>", drag_stop)
 
 def hide_let(arr):
   for i in arr:
@@ -137,9 +147,12 @@ def return_block(p1turn, widget):
           
 
 def pick_block(widget):
-  if(Scrabble.block_bag[0] != None):
+  #print(len(Scrabble.block_bag))
+  if(len(Scrabble.block_bag) != 0):
+    #print("2")
     widget.config(text=Scrabble.block_bag.pop().letter)
   else:     #else remove text and unbind the widget if bag is empty (no more blocks to draw)
+    #print("3")
     widget.config(text="")
     widget.unbind("<Button-1>", funcid=None)
     widget.unbind("<B1-Motion>", funcid=None)
@@ -177,9 +190,9 @@ def drag_stop(event):
             board_arr[j][i].config(text=widget.cget("text"))
             placed_widget_arr.append(widget)  
             return_block(Scrabble.p1turn, widget)
-            print(int(placed_block_arr[0][0:placed_block_arr[0].index("-")]))
-            print(int(placed_block_arr[0][placed_block_arr[0].index("-")+1:]))
-            print(placed_block_arr)
+            #print(int(placed_block_arr[0][0:placed_block_arr[0].index("-")]))
+            #print(int(placed_block_arr[0][placed_block_arr[0].index("-")+1:]))
+            #print(placed_block_arr)
 
 root = Tk()
 
@@ -200,9 +213,9 @@ player1_display.place(x=610, y=600)
 player2_display = Button(root, width=7, height= 1, text= "P2 Display", command=p2display)
 player2_display.place(x=610, y=650)
 turn_display = Label(root, text="P1 turn", width=7, height=1)
-turn_display.place(x=700,y=625)
+turn_display.place(x=700,y=600)
 check = Button(root, width=7, height= 1, text= "check word", command=check_word)
-check.place(x=0,y=0)
+check.place(x=700,y=650)
 placed_block_arr = []
 placed_widget_arr = []
 
